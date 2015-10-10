@@ -7,6 +7,9 @@
     "build": "babel-node ./node_modules/gulp/bin/gulp.js",
     "start": "babel-node ./src/index.js"
   },
+  "engines": {
+    "node": "4.1.2"
+  },
   "dependencies": {
     "express": "^4.13.3"
   },
