@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "babel-node ./node_modules/gulp/bin/gulp.js",
-    "start": "babel-node ./src/index.js",
-    "lint": "eslint ./src"
+    "start": "babel-node ./src/index.js"
   },
   "dependencies": {
     "express": "^4.13.3"
@@ -16,6 +15,7 @@
     "babel-eslint": "^4.1.3",
     "eslint": "^1.6.0",
     "eslint-config-airbnb": "^0.1.0",
-    "gulp": "^3.9.0"
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0"
   }
 }
