@@ -2,6 +2,7 @@
 
 import express from 'express';
 import * as table from './azure/table';
+import * as queue from './azure/queue';
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -25,6 +26,8 @@ app.post('/ping', (req, res) => {
 
   table.ensure(tableName)
   .then(() => table.insert(tableName, record))
+  .then(() => queue.ensure(tableName))
+  .then(() => queue.insert(tableName, dateTime.toString()))
   .then(data => res.send(data), error => res.status(500).send(error.toString()));
 });
 
