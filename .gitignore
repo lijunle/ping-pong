@@ -28,5 +28,6 @@ build/Release
 node_modules
 
 # Generated directories and files
+App_Data
 dist
 server.js
