@@ -92,6 +92,9 @@ selectNodeVersion () {
     NPM_CMD=npm
     NODE_EXE=node
   fi
+
+  # Save node executable to deployment target folder
+  echo "\"$NODE_EXE\" %*" > "$DEPLOYMENT_TARGET/node.cmd"
 }
 
 ##################################################################################################################################
