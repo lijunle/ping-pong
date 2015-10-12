@@ -1,4 +1,5 @@
 import fs from 'fs';
+import del from 'del';
 import path from 'path';
 import gulp from 'gulp';
 import mkdirp from 'mkdirp';
@@ -14,18 +15,21 @@ function writeFile(filePath, content) {
       error ? reject(error) : fs.writeFile(filePath, content, resolve)));
 }
 
+gulp.task('clean', ['azure-clean'], () =>
+  del(['dist']));
+
 gulp.task('lint', () =>
   gulp.src(['gulpfile.js', 'src/**/*.js'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failOnError()));
 
-gulp.task('transform', () =>
+gulp.task('transform', ['clean'], () =>
   gulp.src('src/**/*.js')
     .pipe(babel())
     .pipe(gulp.dest('dist')));
 
-gulp.task('configuration', () =>
+gulp.task('configuration', ['clean'], () =>
   writeFile(
     path.resolve(__dirname, './dist/services/configuration.json'),
     '{}'));
