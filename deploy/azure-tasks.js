@@ -10,25 +10,27 @@ function writeFile(filePath, content) {
       error ? reject(error) : fs.writeFile(filePath, content, resolve)));
 }
 
-function generateServer() {
+gulp.task('azure-tasks:generate-server', () => {
   const serverPath = path.resolve(__dirname, '../server.js');
   const content = 'require("./dist/index");';
   return writeFile(serverPath, content);
-}
+});
 
-function generateJob() {
+gulp.task('azure-tasks:generate-job', () => {
   const nodePath = path.resolve(__dirname, '../node.cmd');
   const jobPath = path.resolve(__dirname, '../dist/job.js');
   const runPath = path.resolve(__dirname, '../App_Data/jobs/continuous/depcheck/run.cmd');
   const content = `"${nodePath}" "${jobPath}"`;
   return writeFile(runPath, content);
-}
+});
 
-function runTasks() {
-  return Promise.all([
-    generateServer(),
-    generateJob(),
-  ]);
-}
+gulp.task('azure-tasks:configuration', ['configuration'], () =>
+  writeFile(
+    path.resolve(__dirname, '../dist/services/configuration.json'),
+    JSON.stringify({ provider: 'azure' })));
 
-gulp.task('azure-tasks', () => runTasks());
+gulp.task('azure-tasks', [
+  'azure-tasks:generate-server',
+  'azure-tasks:generate-job',
+  'azure-tasks:configuration',
+]);

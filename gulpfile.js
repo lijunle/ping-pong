@@ -1,8 +1,18 @@
+import fs from 'fs';
+import path from 'path';
 import gulp from 'gulp';
+import mkdirp from 'mkdirp';
 import eslint from 'gulp-eslint';
 import babel from 'gulp-babel';
 
 import './deploy/azure-tasks';
+
+function writeFile(filePath, content) {
+  const fileDir = path.dirname(filePath);
+  return new Promise((resolve, reject) =>
+    mkdirp(fileDir, error =>
+      error ? reject(error) : fs.writeFile(filePath, content, resolve)));
+}
 
 gulp.task('lint', () =>
   gulp.src(['gulpfile.js', 'src/**/*.js'])
@@ -15,6 +25,11 @@ gulp.task('transform', () =>
     .pipe(babel())
     .pipe(gulp.dest('dist')));
 
-gulp.task('build', ['lint', 'transform']);
+gulp.task('configuration', () =>
+  writeFile(
+    path.resolve(__dirname, './dist/services/configuration.json'),
+    '{}'));
+
+gulp.task('build', ['lint', 'transform', 'configuration']);
 
 gulp.task('deploy-azure', ['build', 'azure-tasks']);
