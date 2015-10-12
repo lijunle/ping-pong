@@ -6,7 +6,7 @@ import mkdirp from 'mkdirp';
 import eslint from 'gulp-eslint';
 import babel from 'gulp-babel';
 
-import './deploy/azure-tasks';
+import './build/azure';
 
 function writeFile(filePath, content) {
   const fileDir = path.dirname(filePath);
