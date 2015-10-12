@@ -8,6 +8,7 @@ node_js:
   - 'node'
 
 script:
+  - npm run build-azure
   - npm run build
 
 deploy:
