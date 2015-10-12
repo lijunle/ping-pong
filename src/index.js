@@ -1,7 +1,5 @@
 import express from 'express';
-import * as table from './azure/table';
-import * as queue from './azure/queue';
-import * as logger from './azure/logger';
+import { logger, table, queue } from './services';
 
 const port = process.env.PORT || 3000;
 const app = express();
