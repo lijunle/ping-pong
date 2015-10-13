@@ -1,8 +1,25 @@
-export function ensure(tableName) { // eslint-disable-line no-unused-vars
+import path from 'path';
+import Database from 'locallydb';
+import * as logger from './logger';
+
+const db = new Database(path.resolve(__dirname, './db'));
+
+export function ensure(tableName) {
+  logger.debug(`[service:local] ensure table [${tableName}] exist (no-op).`);
+  return Promise.resolve();
 }
 
-export function query(tableName) { // eslint-disable-line no-unused-vars
+export function query(tableName) {
+  logger.debug(`[service:local] query records in table [${tableName}].`);
+  return new Promise(resolve =>
+    resolve(db.collection(tableName).items));
 }
 
-export function insert(tableName, record) { // eslint-disable-line no-unused-vars
+export function insert(tableName, record) {
+  logger.debug(`[service:local] insert record ${JSON.stringify(record)} into table [${tableName}].`);
+  return new Promise(resolve => {
+    const collection = db.collection(tableName);
+    collection.insert(record);
+    resolve(record);
+  });
 }
