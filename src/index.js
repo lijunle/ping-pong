@@ -10,7 +10,12 @@ const app = express();
 
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'js');
-app.engine('js', react.createEngine({ transformViews: false }));
+
+app.engine('js', (filePath, options, callback) => {
+  logger.debug(`[app] render view file [${filePath}].`);
+  const viewEngine = react.createEngine({ transformViews: false });
+  return viewEngine(filePath, options, callback);
+});
 
 app.use((req, res, next) => {
   logger.debug(`[app] request route [${req.url}].`);
