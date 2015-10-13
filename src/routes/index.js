@@ -26,8 +26,7 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
     status: 'pending',
   };
 
-  Promise.all([table.ensure(tableName), queue.ensure(tableName)])
-  .then(() => table.insert(tableName, record))
+  table.insert(tableName, record)
   .then(entity => queue.insert(tableName, entity._id))
   .then(() => res.redirect(`/package/${packageName}`),
     error => res.status(500).send(error.toString()));

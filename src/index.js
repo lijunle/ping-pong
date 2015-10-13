@@ -2,6 +2,7 @@ import path from 'path';
 import express from 'express';
 import react from 'express-react-views';
 import routes from './routes';
+import prepare from './prepare';
 import { logger } from './services';
 
 const port = process.env.PORT || 3000;
@@ -13,6 +14,7 @@ app.engine('js', react.createEngine({ transformViews: false }));
 
 app.use('/', routes);
 
-app.listen(port, () => {
-  logger.info(`[app] server started, listening on ${port}.`);
-});
+// TODO serve an error dedicated app when error
+prepare().then(() =>
+  app.listen(port, () =>
+    logger.info(`[app] server started, listening on ${port}.`)));
