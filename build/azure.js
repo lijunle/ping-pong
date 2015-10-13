@@ -17,7 +17,7 @@ gulp.task('azure:generate-server', ['azure:clean'], () => {
 
 gulp.task('azure:generate-job', ['azure:clean'], () => {
   const nodePath = path.resolve(__dirname, '../node.cmd');
-  const jobPath = path.resolve(__dirname, '../dist/job.js');
+  const jobPath = path.resolve(__dirname, '../dist/job/index.js');
   const runPath = path.resolve(__dirname, '../App_Data/jobs/continuous/depcheck/run.cmd');
   const content = `"${nodePath}" "${jobPath}"`;
   return writeFile(runPath, content);

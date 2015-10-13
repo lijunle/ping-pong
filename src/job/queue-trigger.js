@@ -1,5 +1,4 @@
-import * as queue from './queue';
-import * as logger from './logger';
+import { logger, queue } from '../services';
 
 function process(message, fn) {
   if (!message) {
@@ -23,7 +22,7 @@ function handle(error, query) {
   setTimeout(query, interval);
 }
 
-export function execute(queueName, fn) {
+export default function trigger(queueName, fn) {
   function query() {
     logger.debug(`Start query on the queue [${queueName}].`);
     queue.peek(queueName)

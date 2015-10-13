@@ -7,7 +7,7 @@
     "build": "babel-node ./node_modules/gulp/bin/gulp.js build",
     "build-azure": "babel-node ./node_modules/gulp/bin/gulp.js build-azure",
     "local": "babel-node ./src/index.js",
-    "job": "babel-node ./src/job.js"
+    "job": "babel-node ./src/job/index.js"
   },
   "engines": {
     "node": "4.x",
