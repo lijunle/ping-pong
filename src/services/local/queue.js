@@ -22,6 +22,6 @@ export function insert(queueName, message) {
 }
 
 export function remove(queueName, message) {
-  logger.debug(`[service:local] remove message with id [${message.cid}] from queue [${queueName}].`);
+  logger.debug(`[service:local] remove message [${message.message}] from queue [${queueName}].`);
   return table.remove(`queue_${queueName}`, message);
 }
