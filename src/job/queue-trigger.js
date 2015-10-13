@@ -25,6 +25,8 @@ function handle(error, query) {
 export default function trigger(queueName, fn) {
   function query() {
     logger.debug(`Start query on the queue [${queueName}].`);
+
+    // TODO update the queue trigger to be safe for concurrency.
     queue.peek(queueName)
     .then(message => process(message, fn))
     .then(message => queue.remove(queueName, message))
