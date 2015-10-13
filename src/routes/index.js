@@ -28,3 +28,12 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
   .then(() => res.redirect(`/package/${packageName}`),
     error => res.status(500).send(error.toString()));
 });
+
+router.get('/package/:packageName', (req, res) => {
+  table.query('package', {
+    limit: 1,
+    filter: { package: req.params.packageName },
+  })
+  .then(([result]) => res.render('package', result),
+    error => res.send(error));
+});
