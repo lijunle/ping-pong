@@ -3,9 +3,6 @@ import Layout from './layout';
 import { logger } from '../services';
 
 export default React.createClass({
-  propTypes: {
-    name: React.PropTypes.string.isRequired,
-  },
   getInitialState() {
     return {
       packageName: '',

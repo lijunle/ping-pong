@@ -12,6 +12,11 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'js');
 app.engine('js', react.createEngine({ transformViews: false }));
 
+app.use((req, res, next) => {
+  logger.debug(`[app] request route [${req.url}].`);
+  next();
+});
+
 app.use('/', routes);
 
 // TODO serve an error dedicated app when error
