@@ -1,15 +1,6 @@
-import azure from './azure';
-import local from './local';
-import { provider } from './configuration';
+import configuration from './configuration';
 
-function choose() {
-  switch (provider) {
-  case 'azure':
-    return azure;
-  case 'local':
-  default:
-    return local;
-  }
-}
+const provider = configuration.provider || 'local';
 
-export default choose();
+// TODO module loader is not standardized in ES6 spec, fallback to node.js require function. See https://github.com/ModuleLoader/es6-module-loader
+export default require('./' + provider);
