@@ -7,7 +7,7 @@ export default router;
 router.get('/', (req, res) => {
   logger.debug('[route] request home page.');
 
-  res.render('index', { name: 'world' });
+  res.render('index');
 });
 
 router.post('/ping', (req, res) => {
