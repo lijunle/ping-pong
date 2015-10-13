@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 app.get('/', (req, res) => {
-  logger.debug('Request the home page.');
+  logger.debug('[app] request the home page.');
 
   const tableName = 'ping';
   table.ensure(tableName)
@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/ping', (req, res) => {
-  logger.debug('Ping a message.');
+  logger.debug('[app] ping a message.');
 
   const tableName = 'ping';
   const dateTime = new Date();
@@ -33,5 +33,5 @@ app.post('/ping', (req, res) => {
 });
 
 app.listen(port, () => {
-  logger.info(`Server started, listening on ${port}.`);
+  logger.info(`[app] server started, listening on ${port}.`);
 });

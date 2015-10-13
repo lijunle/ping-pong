@@ -4,6 +4,7 @@
   "repository": "https://github.com/lijunle/depcheck-web",
   "license": "MIT",
   "scripts": {
+    "lint": "babel-node ./node_modules/gulp/bin/gulp.js lint",
     "build": "babel-node ./node_modules/gulp/bin/gulp.js build",
     "build-azure": "babel-node ./node_modules/gulp/bin/gulp.js build-azure",
     "local": "babel-node ./src/index.js",
@@ -16,6 +17,7 @@
   "dependencies": {
     "azure-storage": "^0.6.0",
     "express": "^4.13.3",
+    "locallydb": "0.0.9",
     "winston": "^1.1.0",
     "winston-azuretable": "^1.0.3"
   },

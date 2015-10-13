@@ -21,6 +21,7 @@ function toEntityType(value) {
   case Date:
     return generator.DateTime(value); // eslint-disable-line new-cap
   default:
+    logger.error(`[service:azure] convert type [${value.constructor}] to entity type fail.`);
     throw new Error(`The type of value, ${value.constructor}, is not supported to generate Edm type.`);
   }
 }
@@ -39,17 +40,17 @@ function call(functionName, ...args) {
 }
 
 export function ensure(tableName) {
-  logger.debug(`Ensure table [${tableName}] exist.`);
+  logger.debug(`[service:azure] ensure table [${tableName}] exist.`);
   return call('createTableIfNotExists', tableName);
 }
 
 export function query(tableName) {
-  logger.debug(`Query all entities from table [${tableName}].`);
+  logger.debug(`[service:azure] query all entities from table [${tableName}].`);
   return call('queryEntities', tableName, null, null);
 }
 
 export function insert(tableName, record) {
-  logger.debug(`Insert record ${JSON.stringify(record)} into table [${tableName}].`);
+  logger.debug(`[service:azure] insert record ${JSON.stringify(record)} into table [${tableName}].`);
   const entity = toEntity(record);
   return call('insertEntity', tableName, entity);
 }
