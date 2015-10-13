@@ -1,30 +1,28 @@
 import express from 'express';
-import { logger, table, queue } from '../services';
+import bodyParser from 'body-parser';
+import { table, queue } from '../services';
 
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const router = new express.Router();
 export default router;
 
 router.get('/', (req, res) => {
-  logger.debug('[route] request home page.');
-
-  res.render('index', { name: 'world' });
+  res.render('index');
 });
 
-router.post('/ping', (req, res) => {
-  logger.debug('[route] ping a message.');
-
-  const tableName = 'ping';
-  const dateTime = new Date();
+router.post('/packages/new', urlencodedParser, (req, res) => {
+  const tableName = 'package';
+  const packageName = req.body.packageName;
   const record = {
-    PartitionKey: 'ping',
-    RowKey: dateTime.toString(),
-    type: 'ping',
-    time: dateTime,
+    _id: `package-${packageName}`,
+    PartitionKey: 'package',
+    RowKey: packageName,
+    package: packageName,
+    status: 'pending',
   };
 
-  table.ensure(tableName)
-  .then(() => table.insert(tableName, record))
-  .then(() => queue.ensure(tableName))
-  .then(() => queue.insert(tableName, dateTime.toString()))
-  .then(data => res.send(data), error => res.status(500).send(error.toString()));
+  table.insert(tableName, record)
+  .then(entity => queue.insert(tableName, entity._id))
+  .then(() => res.redirect(`/package/${packageName}`),
+    error => res.status(500).send(error.toString()));
 });

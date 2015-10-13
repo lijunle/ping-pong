@@ -1,5 +1,4 @@
 import React from 'react';
-import { logger } from '../services';
 
 export default React.createClass({
   propTypes: {
@@ -7,8 +6,6 @@ export default React.createClass({
     children: React.PropTypes.node.isRequired,
   },
   render() {
-    logger.debug('[view:html] render html view.');
-
     const title = this.props.title || 'Depcheck Web Service';
 
     return (
