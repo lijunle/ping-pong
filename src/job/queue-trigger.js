@@ -1,13 +1,12 @@
 import { logger, queue } from '../services';
 
-function process(message, fn) {
+function filterNoMessage(message) {
   if (!message) {
     logger.debug('No message in the queue.');
     throw new Error('no-message');
   }
 
-  logger.debug(`Process the message, id: [${message.messageid}], text: [${message.messagetext}]`);
-  return fn(message.messagetext).then(() => message);
+  return message;
 }
 
 function handle(error, query) {
@@ -28,7 +27,8 @@ export default function trigger(queueName, fn) {
 
     // TODO update the queue trigger to be safe for concurrency.
     queue.peek(queueName)
-    .then(message => process(message, fn))
+    .then(message => filterNoMessage(message))
+    .then(message => queue.process(message, fn).then(() => message))
     .then(message => queue.remove(queueName, message))
     .then(() => handle(null, query), error => handle(error, query));
   }

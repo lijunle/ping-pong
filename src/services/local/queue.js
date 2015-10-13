@@ -6,6 +6,11 @@ export function ensure(queueName) {
   return Promise.resolve();
 }
 
+export function process(message, fn) {
+  logger.debug(`[service:local] process message with id [${message.cid}].`);
+  return fn(message.message);
+}
+
 export function peek(queueName) {
   logger.debug(`[service:local] peek message from queue [${queueName}].`);
   return table.query(`queue_${queueName}`).then(docs => docs[0]);

@@ -14,6 +14,11 @@ export function ensure(queueName) {
   return call('createQueueIfNotExists', queueName);
 }
 
+export function process(message, fn) {
+  logger.debug(`[service:azure] process message with id [${message.messageid}].`);
+  return fn(message.messagetext);
+}
+
 export function peek(queueName) {
   logger.debug(`Peek message from queue [${queueName}].`);
   return call('getMessages', queueName, { numOfMessages: 1 })
