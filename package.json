@@ -4,6 +4,7 @@
   "repository": "https://github.com/lijunle/depcheck-web",
   "license": "MIT",
   "scripts": {
+    "lint": "babel-node ./node_modules/gulp/bin/gulp.js lint",
     "build": "babel-node ./node_modules/gulp/bin/gulp.js build",
     "build-azure": "babel-node ./node_modules/gulp/bin/gulp.js build-azure",
     "local": "babel-node ./src/index.js",
