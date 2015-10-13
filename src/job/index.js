@@ -1,6 +1,7 @@
-import { logger, table, job } from './services';
+import queueTrigger from './queue-trigger';
+import { logger, table } from '../services';
 
-job.execute('ping', message => {
+queueTrigger('ping', message => {
   logger.info(`Get message [${message}], pong back.`);
 
   return table.insert('ping', {
