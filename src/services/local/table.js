@@ -23,3 +23,12 @@ export function insert(tableName, record) {
     resolve(record);
   });
 }
+
+export function remove(tableName, record) {
+  logger.debug(`[service:local] remove record with id ${record.cid} from table [${tableName}].`);
+  return new Promise(resolve => {
+    const collection = db.collection(tableName);
+    collection.remove(record.cid);
+    resolve(record);
+  });
+}
