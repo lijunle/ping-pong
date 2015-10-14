@@ -1,28 +1,13 @@
 import azure from 'azure-storage';
-import * as logger from './logger';
 
-const generator = azure.TableUtilities.entityGenerator;
+// HACK an internal helper, see Azure/azure-storage-node#93
+import edmHandler from 'azure-storage/lib/services/table/internal/edmhandler';
 
-function isInt(value) {
-  return parseFloat(value) === parseInt(value, 10) && !isNaN(value);
-}
+const generateEntityValue = azure.TableUtilities.entityGenerator.Entity;
 
 function toEntityValue(value) {
-  switch (value.constructor) {
-  case Number:
-    return isInt(value)
-    ? generator.Int32(value) // eslint-disable-line new-cap
-    : generator.Double(value); // eslint-disable-line new-cap
-  case Boolean:
-    return generator.Boolean(value);
-  case String:
-    return generator.String(value);
-  case Date:
-    return generator.DateTime(value); // eslint-disable-line new-cap
-  default:
-    logger.error(`[service:azure] convert type [${value.constructor}] to entity type fail.`);
-    throw new Error(`The type of value, ${value.constructor}, is not supported to generate Edm type.`);
-  }
+  const type = edmHandler.propertyType(value, true);
+  return generateEntityValue(value, type);
 }
 
 function toRecordValue(value) {
@@ -42,3 +27,5 @@ export function toRecord(entity) {
     (result, key) => ({ ...result, [key]: toRecordValue(entity[key]) }),
     {});
 }
+
+export const serializeQueryValue = edmHandler.serializeQueryValue;

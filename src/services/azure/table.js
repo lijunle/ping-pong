@@ -1,7 +1,6 @@
 import azure from 'azure-storage';
-import edmHandler from 'azure-storage/lib/services/table/internal/edmhandler'; // HACK an internal helper, see Azure/azure-storage-node#93
 import * as logger from './logger';
-import { toEntity, toRecord } from './edm-helper';
+import { toEntity, toRecord, serializeQueryValue } from './edm-helper';
 
 const tableService = azure.createTableService();
 
@@ -20,7 +19,7 @@ function buildTableQuery({ limit, filter }) {
 
   if (typeof filter === 'object') {
     const condition = Object.keys(filter)
-      .map(key => `${key} eq ${edmHandler.serializeQueryValue(filter[key])}`)
+      .map(key => `${key} eq ${serializeQueryValue(filter[key])}`)
       .join(' and ');
 
     logger.debug(`[service:azure] build query where with [${condition}].`);
