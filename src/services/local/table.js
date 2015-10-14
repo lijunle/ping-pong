@@ -4,15 +4,28 @@ import * as logger from './logger';
 
 const db = new Database(path.resolve(__dirname, './db'));
 
+function meet(filter) {
+  return filter === undefined
+  ? item => item // filter nothing
+  : item => Object.keys(item).every(key =>
+      filter[key] === undefined || // if not define this criteria, skip it
+      filter[key] === item[key]); // if defined, the item must meet it
+}
+
 export function ensure(tableName) {
   logger.debug(`[service:local] ensure table [${tableName}] exist (no-op).`);
   return Promise.resolve();
 }
 
-export function query(tableName) {
-  logger.debug(`[service:local] query records in table [${tableName}].`);
-  return new Promise(resolve =>
-    resolve(db.collection(tableName).items));
+export function query(tableName, { limit, filter } = {}) {
+  logger.debug(`[service:local] query records in table [${tableName}] with limit [${limit}] and filter [${JSON.stringify(filter)}].`);
+  return new Promise(resolve => {
+    const items = db.collection(tableName).items
+      .filter(meet(filter))
+      .splice(0, limit || 10000); // at most 10k once
+
+    resolve(items);
+  });
 }
 
 export function insert(tableName, record) {

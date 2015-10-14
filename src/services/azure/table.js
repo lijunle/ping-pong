@@ -1,4 +1,5 @@
 import azure from 'azure-storage';
+import edmHandler from 'azure-storage/lib/services/table/internal/edmhandler'; // HACK an internal helper, see Azure/azure-storage-node#93
 import * as logger from './logger';
 import { toEntity, toRecord } from './edm-helper';
 
@@ -10,14 +11,33 @@ function call(functionName, ...args) {
       error ? reject(error) : resolve(result)));
 }
 
+function buildTableQuery({ limit, filter }) {
+  const tableQuery = new azure.TableQuery();
+
+  if (typeof limit === 'number') {
+    tableQuery.top(limit);
+  }
+
+  if (typeof filter === 'object') {
+    const condition = Object.keys(filter)
+      .map(key => `${key} eq ${edmHandler.serializeQueryValue(filter[key])}`)
+      .join(' and ');
+
+    logger.debug(`[service:azure] build query where with [${condition}].`);
+    tableQuery.where(condition);
+  }
+
+  return tableQuery;
+}
+
 export function ensure(tableName) {
   logger.debug(`[service:azure] ensure table [${tableName}] exist.`);
   return call('createTableIfNotExists', tableName);
 }
 
-export function query(tableName) {
-  logger.debug(`[service:azure] query all entities from table [${tableName}].`);
-  return call('queryEntities', tableName, null, null)
+export function query(tableName, options = {}) {
+  logger.debug(`[service:azure] query entities from table [${tableName}] with options [${JSON.stringify(options)}].`);
+  return call('queryEntities', tableName, buildTableQuery(options), null)
     .then(result => result.entries.map(toRecord));
 }
 

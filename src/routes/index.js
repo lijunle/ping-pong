@@ -8,7 +8,8 @@ export default router;
 
 router.get('/', (req, res) => {
   table.query('package')
-  .then(packages => res.render('index', { packages }));
+  .then(packages => res.render('index', { packages }),
+    error => res.send(error));
 });
 
 router.post('/packages/new', urlencodedParser, (req, res) => {
