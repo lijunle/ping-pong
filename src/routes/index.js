@@ -7,7 +7,9 @@ const router = new express.Router();
 export default router;
 
 router.get('/', (req, res) => {
-  res.render('index');
+  table.query('package')
+  .then(packages => res.render('index', { packages }),
+    error => res.send(error));
 });
 
 router.post('/packages/new', urlencodedParser, (req, res) => {
@@ -25,4 +27,13 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
   .then(entity => queue.insert(tableName, entity._id))
   .then(() => res.redirect(`/package/${packageName}`),
     error => res.status(500).send(error.toString()));
+});
+
+router.get('/package/:packageName', (req, res) => {
+  table.query('package', {
+    limit: 1,
+    filter: { package: req.params.packageName },
+  })
+  .then(([result]) => res.render('package', result),
+    error => res.send(error));
 });

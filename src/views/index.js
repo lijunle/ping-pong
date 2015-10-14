@@ -1,7 +1,18 @@
 import React from 'react';
 import Layout from './layout';
 
+const Package = item => (
+  <li>
+    {item.package}
+    {' '}
+    {item.status}
+  </li>
+);
+
 export default React.createClass({
+  propTypes: {
+    packages: React.PropTypes.array.isRequired,
+  },
   getInitialState() {
     return {
       packageName: '',
@@ -22,6 +33,9 @@ export default React.createClass({
             value="New"
           />
         </form>
+        <ul>
+          {this.props.packages.map(item => <Package key={item._id} {...item} />)}
+        </ul>
       </Layout>
     );
   },
