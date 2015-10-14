@@ -7,7 +7,8 @@ const router = new express.Router();
 export default router;
 
 router.get('/', (req, res) => {
-  res.render('index');
+  table.query('package')
+  .then(packages => res.render('index', { packages }));
 });
 
 router.post('/packages/new', urlencodedParser, (req, res) => {
