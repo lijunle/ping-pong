@@ -17,8 +17,6 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
   const packageName = req.body.packageName;
   const record = {
     _id: `package-${packageName}`,
-    PartitionKey: 'package',
-    RowKey: packageName,
     package: packageName,
     status: 'pending',
   };
