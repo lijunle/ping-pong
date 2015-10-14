@@ -34,7 +34,7 @@ export default React.createClass({
           />
         </form>
         <ul>
-          {this.props.packages.map(item => <Package key={item._id} {...item} />)}
+          {this.props.packages.map(item => <Package key={item.id} {...item} />)}
         </ul>
       </Layout>
     );

@@ -16,15 +16,13 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
   const tableName = 'package';
   const packageName = req.body.packageName;
   const record = {
-    _id: `package-${packageName}`,
-    PartitionKey: 'package',
-    RowKey: packageName,
+    id: `package-${packageName}`,
     package: packageName,
     status: 'pending',
   };
 
   table.insert(tableName, record)
-  .then(entity => queue.insert(tableName, entity._id))
+  .then(entity => queue.insert(tableName, entity.id))
   .then(() => res.redirect(`/package/${packageName}`),
     error => res.status(500).send(error.toString()));
 });
