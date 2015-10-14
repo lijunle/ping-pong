@@ -16,10 +16,10 @@ function toRecordValue(value) {
 }
 
 export function toEntity(record) {
-  // parse PartitionKey and RowKey from _id
-  const index = record._id.indexOf('-');
-  record.PartitionKey = record._id.substring(0, index);
-  record.RowKey = record._id.substring(index + 1);
+  // parse PartitionKey and RowKey from id
+  const index = record.id.indexOf('-');
+  record.PartitionKey = record.id.substring(0, index);
+  record.RowKey = record.id.substring(index + 1);
 
   return Object.keys(record).reduce(
     (result, key) => ({ ...result, [key]: toEntityValue(record[key]) }),
