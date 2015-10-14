@@ -1,37 +1,8 @@
 import azure from 'azure-storage';
 import * as logger from './logger';
+import { toEntity, toRecord, serializeQueryValue } from './edm-helper';
 
-const generator = azure.TableUtilities.entityGenerator;
 const tableService = azure.createTableService();
-
-function isInt(value) {
-  return parseFloat(value) === parseInt(value, 10) && !isNaN(value);
-}
-
-function toEntityType(value) {
-  switch (value.constructor) {
-  case Number:
-    return isInt(value)
-    ? generator.Int32(value) // eslint-disable-line new-cap
-    : generator.Double(value); // eslint-disable-line new-cap
-  case Boolean:
-    return generator.Boolean(value);
-  case String:
-    return generator.String(value);
-  case Date:
-    return generator.DateTime(value); // eslint-disable-line new-cap
-  default:
-    logger.error(`[service:azure] convert type [${value.constructor}] to entity type fail.`);
-    throw new Error(`The type of value, ${value.constructor}, is not supported to generate Edm type.`);
-  }
-}
-
-function toEntity(record) {
-  return Object.keys(record).reduce(
-    (result, key) =>
-      Object.assign(result, { [key]: toEntityType(record[key]) }),
-    {});
-}
 
 function call(functionName, ...args) {
   return new Promise((resolve, reject) =>
@@ -39,18 +10,38 @@ function call(functionName, ...args) {
       error ? reject(error) : resolve(result)));
 }
 
+function buildTableQuery({ limit, filter }) {
+  const tableQuery = new azure.TableQuery();
+
+  if (typeof limit === 'number') {
+    tableQuery.top(limit);
+  }
+
+  if (typeof filter === 'object') {
+    const condition = Object.keys(filter)
+      .map(key => `${key} eq ${serializeQueryValue(filter[key])}`)
+      .join(' and ');
+
+    logger.debug(`[service:azure] build query where with [${condition}].`);
+    tableQuery.where(condition);
+  }
+
+  return tableQuery;
+}
+
 export function ensure(tableName) {
   logger.debug(`[service:azure] ensure table [${tableName}] exist.`);
   return call('createTableIfNotExists', tableName);
 }
 
-export function query(tableName) {
-  logger.debug(`[service:azure] query all entities from table [${tableName}].`);
-  return call('queryEntities', tableName, null, null);
+export function query(tableName, options = {}) {
+  logger.debug(`[service:azure] query entities from table [${tableName}] with options [${JSON.stringify(options)}].`);
+  return call('queryEntities', tableName, buildTableQuery(options), null)
+    .then(result => result.entries.map(toRecord));
 }
 
 export function insert(tableName, record) {
   logger.debug(`[service:azure] insert record ${JSON.stringify(record)} into table [${tableName}].`);
-  const entity = toEntity(record);
-  return call('insertEntity', tableName, entity);
+  return call('insertEntity', tableName, toEntity(record))
+    .then(result => ({ ...result, ...record }));
 }

@@ -1,37 +1,30 @@
+import path from 'path';
 import express from 'express';
-import { logger, table, queue } from './services';
+import react from 'express-react-views';
+import routes from './routes';
+import prepare from './prepare';
+import { logger } from './services';
 
 const port = process.env.PORT || 3000;
 const app = express();
 
-app.get('/', (req, res) => {
-  logger.debug('[app] request the home page.');
+app.set('views', path.resolve(__dirname, 'views'));
+app.set('view engine', 'js');
 
-  const tableName = 'ping';
-  table.ensure(tableName)
-  .then(() => table.query(tableName))
-  .then(data => res.send(data), error => res.send(error));
+app.engine('js', (filePath, options, callback) => {
+  logger.debug(`[app] render view file [${filePath}].`);
+  const viewEngine = react.createEngine({ transformViews: false });
+  return viewEngine(filePath, options, callback);
 });
 
-app.post('/ping', (req, res) => {
-  logger.debug('[app] ping a message.');
-
-  const tableName = 'ping';
-  const dateTime = new Date();
-  const record = {
-    PartitionKey: 'ping',
-    RowKey: dateTime.toString(),
-    type: 'ping',
-    time: dateTime,
-  };
-
-  table.ensure(tableName)
-  .then(() => table.insert(tableName, record))
-  .then(() => queue.ensure(tableName))
-  .then(() => queue.insert(tableName, dateTime.toString()))
-  .then(data => res.send(data), error => res.status(500).send(error.toString()));
+app.use((req, res, next) => {
+  logger.debug(`[app] request route [${req.url}].`);
+  next();
 });
 
-app.listen(port, () => {
-  logger.info(`[app] server started, listening on ${port}.`);
-});
+app.use('/', routes);
+
+// TODO serve an error dedicated app when error
+prepare().then(() =>
+  app.listen(port, () =>
+    logger.info(`[app] server started, listening on ${port}.`)));
