@@ -1,37 +1,8 @@
 import azure from 'azure-storage';
 import * as logger from './logger';
+import { toEntity, toRecord } from './edm-helper';
 
-const generator = azure.TableUtilities.entityGenerator;
 const tableService = azure.createTableService();
-
-function isInt(value) {
-  return parseFloat(value) === parseInt(value, 10) && !isNaN(value);
-}
-
-function toEntityType(value) {
-  switch (value.constructor) {
-  case Number:
-    return isInt(value)
-    ? generator.Int32(value) // eslint-disable-line new-cap
-    : generator.Double(value); // eslint-disable-line new-cap
-  case Boolean:
-    return generator.Boolean(value);
-  case String:
-    return generator.String(value);
-  case Date:
-    return generator.DateTime(value); // eslint-disable-line new-cap
-  default:
-    logger.error(`[service:azure] convert type [${value.constructor}] to entity type fail.`);
-    throw new Error(`The type of value, ${value.constructor}, is not supported to generate Edm type.`);
-  }
-}
-
-function toEntity(record) {
-  return Object.keys(record).reduce(
-    (result, key) =>
-      Object.assign(result, { [key]: toEntityType(record[key]) }),
-    {});
-}
 
 function call(functionName, ...args) {
   return new Promise((resolve, reject) =>
@@ -46,7 +17,8 @@ export function ensure(tableName) {
 
 export function query(tableName) {
   logger.debug(`[service:azure] query all entities from table [${tableName}].`);
-  return call('queryEntities', tableName, null, null);
+  return call('queryEntities', tableName, null, null)
+    .then(result => result.entries.map(toRecord));
 }
 
 export function insert(tableName, record) {
