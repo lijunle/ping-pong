@@ -42,6 +42,6 @@ export function query(tableName, options = {}) {
 
 export function insert(tableName, record) {
   logger.debug(`[service:azure] insert record ${JSON.stringify(record)} into table [${tableName}].`);
-  const entity = toEntity(record);
-  return call('insertEntity', tableName, entity);
+  return call('insertEntity', tableName, toEntity(record))
+    .then(result => ({ ...result, ...record }));
 }
