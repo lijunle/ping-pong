@@ -22,7 +22,7 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
   };
 
   table.insert(tableName, record)
-  .then(entity => queue.insert(tableName, entity.id))
+  .then(() => queue.insert(tableName, packageName))
   .then(() => res.redirect(`/package/${packageName}`),
     error => res.status(500).send(error.toString()));
 });

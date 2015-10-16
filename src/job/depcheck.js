@@ -1,8 +1,13 @@
-import { logger } from '../services';
+import { logger, table } from '../services';
 
 export default function depcheck(packageName) {
   logger.info(`[job:depcheck] depcheck on package [${packageName}].`);
-  return new Promise(resolve => {
-    resolve(); // TODO resolve after update package status to started.
-  });
+  return table.query('package', {
+    limit: 1,
+    filter: { package: packageName },
+  })
+  .then(([record]) => table.update('package', {
+    ...record,
+    status: 'started',
+  }));
 }
