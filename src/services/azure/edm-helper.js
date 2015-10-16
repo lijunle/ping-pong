@@ -21,15 +21,17 @@ export function toEntity(record) {
   record.PartitionKey = record.id.substring(0, index);
   record.RowKey = record.id.substring(index + 1);
 
-  return Object.keys(record).reduce(
-    (result, key) => ({ ...result, [key]: toEntityValue(record[key]) }),
-    {});
+  return Object.keys(record).reduce((result, key) => ({
+    ...result,
+    [key]: key === '.metadata' ? record[key] : toEntityValue(record[key]),
+  }), {});
 }
 
 export function toRecord(entity) {
-  return Object.keys(entity).reduce(
-    (result, key) => ({ ...result, [key]: toRecordValue(entity[key]) }),
-    {});
+  return Object.keys(entity).reduce((result, key) => ({
+    ...result,
+    [key]: toRecordValue(entity[key]),
+  }), {});
 }
 
 export const serializeQueryValue = edmHandler.serializeQueryValue;

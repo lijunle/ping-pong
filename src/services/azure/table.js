@@ -45,3 +45,9 @@ export function insert(tableName, record) {
   return call('insertEntity', tableName, toEntity(record))
     .then(result => ({ ...result, ...record }));
 }
+
+export function update(tableName, record) {
+  logger.debug(`[service:azure] update record with id [${record.id}] from table [${tableName}] to ${JSON.stringify(record)}.`);
+  return call('updateEntity', tableName, toEntity(record))
+    .then(result => ({ ...record, ...result}));
+}

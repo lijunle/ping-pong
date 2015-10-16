@@ -37,6 +37,15 @@ export function insert(tableName, record) {
   });
 }
 
+export function update(tableName, record) {
+  logger.debug(`[service:local] update record with id [${record.id}] from table [${tableName}] to ${JSON.stringify(record)}.`);
+  return new Promise(resolve => {
+    const collection = db.collection(tableName);
+    collection.update(record.cid, record);
+    resolve(record);
+  });
+}
+
 export function remove(tableName, record) {
   logger.debug(`[service:local] remove record with id [${record.cid}] from table [${tableName}].`);
   return new Promise(resolve => {
