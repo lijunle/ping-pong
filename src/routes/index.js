@@ -19,10 +19,11 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
     id: `package-${packageName}`,
     package: packageName,
     status: 'pending',
+    createTime: new Date(),
   };
 
   table.insert(tableName, record)
-  .then(entity => queue.insert(tableName, entity.id))
+  .then(() => queue.insert(tableName, packageName))
   .then(() => res.redirect(`/package/${packageName}`),
     error => res.status(500).send(error.toString()));
 });
