@@ -9,5 +9,6 @@ export default function depcheck(packageName) {
   .then(([record]) => table.update('package', {
     ...record,
     status: 'started',
+    startTime: new Date(),
   }));
 }

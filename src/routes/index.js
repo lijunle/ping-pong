@@ -19,6 +19,7 @@ router.post('/packages/new', urlencodedParser, (req, res) => {
     id: `package-${packageName}`,
     package: packageName,
     status: 'pending',
+    createTime: new Date(),
   };
 
   table.insert(tableName, record)
