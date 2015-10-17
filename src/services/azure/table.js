@@ -43,5 +43,11 @@ export function query(tableName, options = {}) {
 export function insert(tableName, record) {
   logger.debug(`[service:azure] insert record ${JSON.stringify(record)} into table [${tableName}].`);
   return call('insertEntity', tableName, toEntity(record))
-    .then(result => ({ ...result, ...record }));
+    .then(result => ({ ...record, ...result }));
+}
+
+export function update(tableName, record) {
+  logger.debug(`[service:azure] update record with id [${record.id}] from table [${tableName}] to ${JSON.stringify(record)}.`);
+  return call('updateEntity', tableName, toEntity(record))
+    .then(result => ({ ...record, ...result}));
 }
